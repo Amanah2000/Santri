@@ -99,23 +99,22 @@ function cetakSantri(){
   const q = (document.getElementById('cari').value||'').toLowerCase();
   const filtered = data.filter(d=> (d.nama+' '+d.wali+' '+d.alamat).toLowerCase().includes(q));
   const tgl = new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});
-  const rows = filtered.length ? filtered.map((d,i)=>`<tr><td>${i+1}</td><td style="text-align:left">${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir}</td><td style="text-align:left">${d.wali}</td><td>${d.nohp}</td><td style="text-align:left">${d.alamat}</td><td>${d.tglMasuk}</td></tr>`).join('') : `<tr><td colspan="9">Belum ada data</td></tr>`;
+  const rows = filtered.map((d,i)=>`<tr><td>${i+1}</td><td>${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir}</td><td>${d.wali}</td><td>${d.nohp}</td><td>${d.alamat}</td><td>${d.tglMasuk}</td></tr>`).join('') || `<tr><td colspan="9">Belum ada data</td></tr>`;
   let old=document.getElementById('printFrame'); if(old) old.remove();
-  let iframe=document.createElement('iframe');
-  iframe.id='printFrame'; iframe.style.position='fixed'; iframe.style.width='0'; iframe.style.height='0'; iframe.style.border='0';
+  let iframe=document.createElement('iframe'); iframe.id='printFrame'; iframe.style.width='0'; iframe.style.height='0'; iframe.style.border='0'; iframe.style.position='fixed'; iframe.style.right='0'; iframe.style.bottom='0';
   document.body.appendChild(iframe);
   let html=`<html><head><title>Data Santri</title><style>
-    @page{size:landscape;margin:10mm} body{font-family:Arial;padding:20px;color:#000}
-    h2{text-align:center;margin:0} .sub{text-align:center;margin:6px 0 12px 0}
-    table{width:100%;border-collapse:collapse} th,td{border:1px solid #000;padding:6px;font-size:11px;text-align:center} th{background:#eee}
-  .ttd-wrap{display:flex;justify-content:center;margin-top:60px} .ttd{text-align:center;width:240px;line-height:1.6}
+    @page{size:portrait;margin:12mm} body{font-family:Arial;color:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh}
+    h2{margin:0;text-align:center} .sub{text-align:center;margin:8px 0 16px 0}
+    table{width:95%;border-collapse:collapse;margin:0 auto} th,td{border:1px solid #000;padding:7px;font-size:11px;text-align:center}
+    th{background:#eee} .ttd{margin-top:60px;text-align:center;line-height:1.6}
     </style></head><body>
     <h2>DATA SANTRI TPQ BAITURRAHMAN</h2><div class="sub">Total: ${filtered.length} | ${tgl}</div>
     <table><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat Lahir</th><th>Tgl Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr>${rows}</table>
-    <div class="ttd-wrap"><div class="ttd">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div></div>
+    <div class="ttd">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div>
     </body></html>`;
   let doc=iframe.contentWindow.document; doc.open(); doc.write(html); doc.close();
-  setTimeout(()=>{ iframe.contentWindow.focus(); iframe.contentWindow.print(); }, 500);
+  setTimeout(()=>{ iframe.contentWindow.print(); }, 500);
 }
 document.addEventListener('DOMContentLoaded', ()=>{
   const today = new Date().toISOString().slice(0,10);
