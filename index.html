@@ -352,43 +352,37 @@ document.addEventListener('DOMContentLoaded', function(){
   } catch(e){ console.log("reset error", e); }
 }
 function cetakSantri(){
-  let data = getData();
-  let cari = (document.getElementById('cari')?.value || "").toLowerCase();
-  let filtered = data.filter(d => `${d.nama||''} ${d.wali||''} ${d.alamat||''}`.toLowerCase().includes(cari));
-  let tgl = new Date().toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric'});
-  let printed = false;
-  let html = `<html><head><title>Data Santri TPQ</title><style>
-    @page{size:landscape;margin:10mm} 
-    body{font-family:Arial;padding:20px;margin:0} 
-    h2,p{text-align:center;margin:0} 
-    p{margin:5px 0 15px 0} 
-    table{width:100%;border-collapse:collapse;margin-top:10px} 
-    th,td{border:1px solid #000;padding:6px;font-size:12px;text-align:center} 
-    th{background:#eee} 
-    .footer-wrap{margin-top:50px;display:flex;justify-content:flex-end} 
-    .footer{text-align:center;line-height:1.6;width:250px}
+  const data = typeof getData === 'function' ? getData() : JSON.parse(localStorage.getItem('santri')||'[]');
+  const q = (document.getElementById('cari')?.value||'').toLowerCase();
+  const filtered = data.filter(d => `${d.nama||''} ${d.wali||''} ${d.alamat||''}`.toLowerCase().includes(q));
+  const tgl = new Date().toLocaleDateString('id-ID', {day:'2-digit',month:'2-digit',year:'numeric'});
+
+  const rows = filtered.length ? filtered.map((d,i)=>`
+    <tr><td>${i+1}</td><td style="text-align:left">${d.nama||''}</td><td>${d.lp||''}</td><td>${(d.tempat||'')}, ${d.tglLahir||''}</td><td style="text-align:left">${d.wali||''}</td><td>${d.nohp||''}</td><td style="text-align:left">${d.alamat||''}</td><td>${d.tglMasuk||''}</td></tr>
+  `).join('') : `<tr><td colspan="8">Belum ada data</td></tr>`;
+
+  const html = `<!DOCTYPE html><html><head><title>Data Santri TPQ</title><style>
+    @page{size:landscape;margin:15mm} body{font-family:Arial, sans-serif;color:#000}
+    h2{text-align:center;margin:0} .sub{text-align:center;margin:6px 0 16px 0}
+    table{width:100%;border-collapse:collapse} th,td{border:1px solid #000;padding:6px;font-size:11px}
+    th{background:#f0f0f0;text-align:center} td{vertical-align:top}
+    .ttd-wrap{display:flex;justify-content:flex-end;margin-top:50px} .ttd{text-align:center;width:220px;line-height:1.6}
     </style></head><body>
-    <h2>DATA SANTRI TPQ BAITURRAHMAN</h2><p>Total: ${filtered.length} | ${tgl}</p>
-    <table><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Temp/Tgl.Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr>
-    ${filtered.length ? filtered.map((d,i)=>`<tr><td>${i+1}</td><td>${d.nama||''}</td><td>${d.lp||''}</td><td>${(d.tempat||'')}, ${d.tglLahir||''}</td><td>${d.wali||''}</td><td>${d.nohp||''}</td><td>${d.alamat||''}</td><td>${d.tglMasuk||''}</td></tr>`).join('') : '<tr><td colspan=8>Belum ada data</td></tr>'}
-    </table>
-    <div class="footer-wrap"><div class="footer">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div></div>
+    <h2>DATA SANTRI TPQ BAITURRAHMAN</h2><div class="sub">Total: ${filtered.length} | ${tgl}</div>
+    <table><thead><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Temp/Tgl.Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="ttd-wrap"><div class="ttd">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div></div>
     <script>
-      let done=false;
-      function doPrint(){
-        if(done) return;
-        done=true;
-        setTimeout(()=>{ window.print(); window.onafterprint = ()=>window.close(); }, 300);
-      }
-      window.onload = doPrint;
+      window.onload = function(){
+        setTimeout(function(){ window.print(); }, 400);
+        window.onafterprint = function(){ window.close(); };
+      };
     <\/script>
     </body></html>`;
-  let w = window.open('', '_blank');
-  w.document.open();
+
+  const w = window.open('', '_blank');
   w.document.write(html);
   w.document.close();
 }
-
 function goDashboard(){
   window.location.href = 'santri.html';
 }
