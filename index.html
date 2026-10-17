@@ -1,397 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DATA SANTRI - TPQ BAITURRAHMAN</title>
-    <style>
-      * {
-        box-sizing: border-box;
-        font-family: Inter, system-ui, sans-serif;
-      }
-      body {
-        background: #0f172a;
-        color: #e2e8f0;
-        padding: 20px;
-        margin: 0;
-      }
-      .card {
-        background: #1e293b;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        margin-bottom: 20px;
-        border: 1px solid #334155;
-      }
-      h2 {
-        text-align: center;
-        margin: 0 0 5px;
-        color: #fff;
-      }
-      .sub {
-        text-align: center;
-        color: #94a3b8;
-        font-size: 13px;
-        margin-bottom: 20px;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 12px;
-      }
-      input,
-      select {
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid #334155;
-        background: #0f172a;
-        color: #fff;
-        outline: none;
-      }
-      .btn {
-        padding: 10px 16px;
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        font-weight: 700;
-      }
-      .btn-biru {
-        background: #3b82f6;
-        color: #fff;
-      }
-      .btn-hijau {
-        background: #10b981;
-        color: #fff;
-      }
-      .btn-kuning {
-        background: #f59e0b;
-        color: #000;
-      }
-      .btn-merah {
-        background: #ef4444;
-        color: #fff;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-        font-size: 13px;
-      }
-      th {
-        background: #334155;
-        color: #fff;
-        padding: 10px;
-        white-space: nowrap;
-      }
-      td {
-        padding: 8px 10px;
-        border-bottom: 1px solid #334155;
-        vertical-align: top;
-      }
-      tr:hover {
-        background: #ffffff0d;
-      }
-      .aksi {
-        display: flex;
-        gap: 6px;
-      }
-      .search {
-        width: 100%;
-        padding: 12px;
-        border-radius: 12px;
-        margin-bottom: 12px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h2>DATA SANTRI TPQ BAITURRAHMAN</h2>
-      <div class="sub">Jl. Gadang 12 A Gadang Sukun Malang | PIN Hapus: amanah2000</div>
-      <div class="grid">
-        <input id="nama" placeholder="Nama Lengkap *" />
-        <select id="lp">
-          <option value="">L / P</option>
-          <option value="L">L - Laki</option>
-          <option value="P">P - Perempuan</option>
-        </select>
-        <input id="tempat" placeholder="Tempat Lahir" />
-        <input id="tglLahir" type="date" />
-        <input id="wali" placeholder="Nama Wali" />
-        <input id="nohp" placeholder="No. HP Wali" />
-        <input id="alamat" placeholder="Alamat" />
-        <input id="tglMasuk" type="date" />
-      </div>
-    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-  <button id="btnSimpan" class="btn" style="background:#3b82f6;color:#fff;padding:10px 16px;border-radius:10px;border:none;font-weight:700" onclick="simpanSantri()">+ Tambah Santri</button>
-  <button id="btnCetak" class="btn" style="background:#10b981;color:#fff;padding:10px 16px;border-radius:10px;border:none;font-weight:700" onclick="cetakSantri()">🖨️ Cetak</button>
-   <button id="btnBatal" class="btn" style="background:#f59e0b;color:#000;padding:10px 16px;border-radius:10px;border:none;font-weight:700;display:none" onclick="resetForm()">Batal Edit</button>
-    <button class="btn" onclick="goDashboard()" style="background:#334155;color:#fff;padding:10px 16px;border-radius:10px;border:none;font-weight:700">Dashboard</button>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DATA SANTRI TPQ BAITURRAHMAN</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:#0f172a;color:#e2e8f0;padding:16px}
+.card{background:#1e293b;border-radius:16px;padding:18px;margin:0 auto 16px auto;max-width:1100px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+h1{margin:0;text-align:center;font-size:22px} .sub{text-align:center;color:#94a3b8;font-size:13px;margin:6px 0 16px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px} @media(max-width:768px){.grid{grid-template-columns:1fr}}
+input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;outline:none}
+input:focus,select:focus{border-color:#38bdf8}
+.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{border:0;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer}
+.btn-blue{background:#3b82f6;color:#fff} .btn-green{background:#22c55e;color:#000} .btn-gray{background:#334155;color:#fff}
+.search{width:100%;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:8px;border-bottom:1px solid #334155;text-align:left}
+th{color:#94a3b8;font-size:12px;text-transform:uppercase} .center{text-align:center}
+.action button{margin-right:4px;padding:4px 8px;border-radius:6px;border:0;cursor:pointer;font-size:11px}
+.del{background:#ef4444;color:#fff}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>DATA SANTRI TPQ BAITURRAHMAN</h1>
+<div class="sub">Jl. Gadang 12 A Gadang Sukun Malang | PIN Hapus: amanah2000</div>
+<div class="grid">
+<input id="nama" placeholder="Nama Santri">
+<select id="lp"><option value="L">L - Laki</option><option value="P">P - Perempuan</option></select>
+<input id="tempat" placeholder="Tempat Lahir">
+<input id="tglLahir" type="date">
+<input id="wali" placeholder="Nama Wali">
+<input id="nohp" placeholder="No HP Wali">
+<input id="alamat" placeholder="Alamat">
+<input id="tglMasuk" type="date">
+</div>
+<div class="btn-row">
+<button class="btn btn-blue" onclick="tambahSantri()">+ Tambah Santri</button>
+<button class="btn btn-green" onclick="cetakSantri()">Cetak</button>
+<button class="btn btn-gray" onclick="location.reload()">Dashboard</button>
+</div>
+</div>
 
- </div>
-        </button>
-      </div>
-    </div>
+<div class="card">
+<input id="cari" class="search" placeholder="Cari Nama / Wali / Alamat..." oninput="render()">
+<div style="overflow:auto">
+<table><thead><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat Lahir</th><th>Tgl Lahir</th><th>Wali</th><th>No.HP</th><th>Alamat</th><th>Tgl Masuk</th><th>AKSI</th></tr></thead>
+<tbody id="tbody"><tr><td colspan="10" class="center">Belum ada data</td></tr></tbody></table>
+</div>
+<div id="total" style="margin-top:10px;color:#94a3b8;font-size:13px">Total Santri: 0</div>
+</div>
 
-    <div class="card">
-      <input
-        id="cari"
-        class="search"
-        placeholder="🔍 Cari Nama / Wali / Alamat..."
-        oninput="renderSantri()"
-      />
-      <div style="overflow: auto">
-        <table>
-          <thead>
-            <tr>
-              <th>NO</th>
-              <th>NAMA</th>
-              <th>L/P</th>
-              <th>Tempat Lahir</th>
-              <th>Tgl Lahir</th>
-              <th>Wali</th>
-              <th>No.HP</th>
-              <th>Alamat</th>
-              <th>Tgl Masuk</th>
-              <th>AKSI</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-      <div style="margin-top: 10px; color: #94a3b8; font-size: 12px">
-        Total Santri: <span id="total">0</span>
-      </div>
-    </div>
+<script>
+const LS_KEY = 'santri-tpq-v2';
+function getData(){ try{return JSON.parse(localStorage.getItem(LS_KEY)||'[]')}catch(e){return []} }
+function saveData(d){ localStorage.setItem(LS_KEY, JSON.stringify(d)) }
 
-    <!-- MODAL PIN - PENGGANTI prompt() BIAR TIDAK DIBLOKIR CHROME -->
-    <div
-      id="modalPin"
-      style="
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.75);
-        z-index: 9999;
-        align-items: center;
-        justify-content: center;
-      "
-    >
-      <div
-        style="
-          background: #1e293b;
-          padding: 24px;
-          border-radius: 16px;
-          width: 90%;
-          max-width: 360px;
-          text-align: center;
-          border: 1px solid #334155;
-        "
-      >
-        <h3 style="margin: 0 0 8px; color: #fff">🔐 Konfirmasi PIN</h3>
-        <p style="color: #94a3b8; font-size: 13px" id="modalText">Masukkan PIN</p>
-        <input
-          id="inputPin"
-          type="password"
-          placeholder="amanah2000"
-          style="
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: #fff;
-            text-align: center;
-            font-size: 18px;
-            margin-top: 10px;
-          "
-        />
-        <div style="display: flex; gap: 10px; margin-top: 16px">
-          <button
-            onclick="tutupModal()"
-            style="
-              flex: 1;
-              padding: 10px;
-              border-radius: 10px;
-              border: none;
-              background: #334155;
-              color: #fff;
-            "
-          >
-            Batal
-          </button>
-          <button
-            onclick="konfirmasiHapus()"
-            style="
-              flex: 1;
-              padding: 10px;
-              border-radius: 10px;
-              border: none;
-              background: #ef4444;
-              color: #fff;
-              font-weight: 700;
-            "
-          >
-            Hapus
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      const PIN_HAPUS = "amanah2000";
-      let editIndex = -1;
-      let indexHapus = -1;
-
-  function getData(){ 
-  try{
-    let d = JSON.parse(localStorage.getItem('dataSantriTPQ')||'[]');
-    console.log('CEK DATA TERSEMPAN:', d.length, d);
-    return d;
-  }catch(e){ return []; }
-}
-function setData(d){ 
-  localStorage.setItem('dataSantriTPQ', JSON.stringify(d)); 
-  console.log('DATA DISIMPAN:', d.length);
-}
-
-function renderSantri(){
-  let tbody = document.getElementById('tbody');
-  if(!tbody){ console.log('tbody tidak ketemu'); return; }
+function tambahSantri(){
+  const nama = document.getElementById('nama').value.trim();
+  const lp = document.getElementById('lp').value;
+  const tempat = document.getElementById('tempat').value.trim() || 'Malang';
+  const tglLahir = document.getElementById('tglLahir').value;
+  const wali = document.getElementById('wali').value.trim();
+  const nohp = document.getElementById('nohp').value.trim();
+  const alamat = document.getElementById('alamat').value.trim();
+  const tglMasuk = document.getElementById('tglMasuk').value || new Date().toISOString().slice(0,10);
+  if(!nama){ alert('Nama wajib diisi'); return; }
+  if(!wali){ alert('Nama wali wajib diisi'); return; }
   let data = getData();
-  let cariInput = document.getElementById('cari');
-  let cari = cariInput ? (cariInput.value||"").toLowerCase() : "";
-  let html = ""; let no=0;
-  data.forEach((d,i)=>{
-    let gabung = `${d.nama||''} ${d.wali||''} ${d.alamat||''}`.toLowerCase();
-    if(cari && !gabung.includes(cari)) return;
-    no++;
-    html+=`<tr><td>${no}</td><td><b>${d.nama}</b></td><td style="text-align:center">${d.lp||'-'}</td><td>${d.tempat||'-'}</td><td>${d.tglLahir||'-'}</td><td>${d.wali||'-'}</td><td>${d.nohp||'-'}</td><td>${d.alamat||'-'}</td><td>${d.tglMasuk||'-'}</td><td class="aksi"><button class="btn" style="background:#f59e0b" onclick="editSantri(${i})">Edit</button><button class="btn" style="background:#ef4444;color:#fff" onclick="hapusSantri(${i})">Hapus</button></td></tr>`;
-  });
-  tbody.innerHTML = html || `<tr><td colspan=10 style="text-align:center;padding:20px;color:#94a3b8">Belum ada data - Total di storage: ${data.length}</td></tr>`;
-  let totalEl = document.getElementById('total');
-  if(totalEl) totalEl.textContent = data.length; // total asli, bukan filter
+  data.push({id:Date.now(), nama, lp, tempat, tglLahir, wali, nohp, alamat, tglMasuk});
+  saveData(data);
+  document.getElementById('nama').value=''; document.getElementById('wali').value=''; document.getElementById('nohp').value=''; document.getElementById('alamat').value='';
+  render();
 }
 
-// Panggil render setelah halaman benar-benar siap
-document.addEventListener('DOMContentLoaded', function(){
-  console.log('Halaman siap, render sekarang');
-  renderSantri();
-});
-
-      function renderSantri() {
-        let data = getData();
-        let cari = (document.getElementById("cari").value || "").toLowerCase();
-        let html = "";
-        let no = 0;
-        data.forEach((d, i) => {
-          if (cari && !`${d.nama} ${d.wali} ${d.alamat}`.toLowerCase().includes(cari)) return;
-          no++;
-          html += `<tr><td>${no}</td><td><b>${d.nama}</b></td><td style="text-align:center">${d.lp || "-"}</td><td>${d.tempat || "-"}</td><td>${d.tglLahir || "-"}</td><td>${d.wali || "-"}</td><td>${d.nohp || "-"}</td><td>${d.alamat || "-"}</td><td>${d.tglMasuk || "-"}</td><td class="aksi"><button class="btn btn-kuning" style="padding:5px 10px;font-size:11px" onclick="editSantri(${i})">Edit</button><button class="btn btn-merah" style="padding:5px 10px;font-size:11px" onclick="hapusSantri(${i})">Hapus</button></td></tr>`;
-        });
-        document.getElementById("tbody").innerHTML =
-          html ||
-          `<tr><td colspan=10 style="text-align:center;color:#94a3b8;padding:20px">Belum ada data</td></tr>`;
-        document.getElementById("total").textContent = no;
-      }
-
-      function editSantri(i) {
-        let d = getData()[i];
-        document.getElementById("nama").value = d.nama;
-        document.getElementById("lp").value = d.lp;
-        document.getElementById("tempat").value = d.tempat;
-        document.getElementById("tglLahir").value = d.tglLahir;
-        document.getElementById("wali").value = d.wali;
-        document.getElementById("nohp").value = d.nohp;
-        document.getElementById("alamat").value = d.alamat;
-        document.getElementById("tglMasuk").value = d.tglMasuk;
-        editIndex = i;
-        document.getElementById("btnSimpan").textContent = "Update Santri";
-        document.getElementById("btnBatal").style.display = "inline-block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      function hapusSantri(i) {
-        indexHapus = i;
-        document.getElementById("modalText").textContent = `Hapus santri: ${getData()[i].nama}?`;
-        document.getElementById("inputPin").value = "";
-        document.getElementById("modalPin").style.display = "flex";
-        document.getElementById("inputPin").focus();
-      }
-      function tutupModal() {
-        document.getElementById("modalPin").style.display = "none";
-        indexHapus = -1;
-      }
-      function konfirmasiHapus() {
-        if (document.getElementById("inputPin").value !== PIN_HAPUS)
-          return alert("PIN Salah! Harus amanah2000");
-        let data = getData();
-        data.splice(indexHapus, 1);
-        setData(data);
-        tutupModal();
-        renderSantri();
-      }
-      document.getElementById("inputPin").addEventListener("keyup", (e) => {
-        if (e.key === "Enter") konfirmasiHapus();
-      });
-
-      function resetForm(){
-  try {
-    ['nama','tempat','tglLahir','wali','nohp','alamat','tglMasuk'].forEach(id=>{
-      let el = document.getElementById(id);
-      if(el) el.value = '';
-    });
-    let elLP = document.getElementById('lp');
-    if(elLP) elLP.value = '';
-    
-    editIndex = -1;
-    let btnSimpan = document.getElementById('btnSimpan');
-    let btnBatal = document.getElementById('btnBatal');
-    if(btnSimpan){ btnSimpan.textContent = "+ Tambah Santri"; }
-    if(btnBatal){ btnBatal.style.display = "none"; }
-  } catch(e){ console.log("reset error", e); }
+function hapusSantri(id){
+  let pin = prompt('PIN hapus:');
+  if(pin!=='amanah2000'){ alert('PIN salah'); return; }
+  saveData(getData().filter(x=>x.id!==id)); render();
 }
+function render(){
+  let data = getData();
+  let q = (document.getElementById('cari').value||'').toLowerCase();
+  let filtered = data.filter(d=> (d.nama+' '+d.wali+' '+d.alamat).toLowerCase().includes(q));
+  let tbody = document.getElementById('tbody');
+  if(filtered.length===0){ tbody.innerHTML='<tr><td colspan="10" class="center">Belum ada data</td></tr>'; }
+  else{
+    tbody.innerHTML = filtered.map((d,i)=>`<tr>
+      <td>${i+1}</td><td>${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir}</td>
+      <td>${d.wali}</td><td>${d.nohp}</td><td>${d.alamat}</td><td>${d.tglMasuk}</td>
+      <td class="action"><button class="del" onclick="hapusSantri(${d.id})">Hapus</button></td></tr>`).join('');
+  }
+  document.getElementById('total').innerText='Total Santri: '+filtered.length;
+}
+
 function cetakSantri(){
-  const data = typeof getData === 'function' ? getData() : JSON.parse(localStorage.getItem('santri')||'[]');
-  const q = (document.getElementById('cari')?.value||'').toLowerCase();
-  const filtered = data.filter(d => `${d.nama||''} ${d.wali||''} ${d.alamat||''}`.toLowerCase().includes(q));
-  const tgl = new Date().toLocaleDateString('id-ID', {day:'2-digit',month:'2-digit',year:'numeric'});
-  
-  const rows = filtered.length ? filtered.map((d,i)=>`
-    <tr><td>${i+1}</td><td style="text-align:left">${d.nama||''}</td><td>${d.lp||''}</td><td>${(d.tempat||'')}, ${d.tglLahir||''}</td><td style="text-align:left">${d.wali||''}</td><td>${d.nohp||''}</td><td style="text-align:left">${d.alamat||''}</td><td>${d.tglMasuk||''}</td></tr>
-  `).join('') : `<tr><td colspan="8">Belum ada data - Silakan input santri dulu</td></tr>`;
-
-  // Hapus iframe lama kalau ada
-  let old = document.getElementById('printFrame');
-  if(old) old.remove();
-
-  let iframe = document.createElement('iframe');
-  iframe.id = 'printFrame';
-  iframe.style.position = 'fixed';
-  iframe.style.right = '0';
-  iframe.style.bottom = '0';
-  iframe.style.width = '0';
-  iframe.style.height = '0';
-  iframe.style.border = '0';
+  const data = getData();
+  const q = (document.getElementById('cari').value||'').toLowerCase();
+  const filtered = data.filter(d=> (d.nama+' '+d.wali+' '+d.alamat).toLowerCase().includes(q));
+  const tgl = new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const rows = filtered.length ? filtered.map((d,i)=>`<tr><td>${i+1}</td><td style="text-align:left">${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir}</td><td style="text-align:left">${d.wali}</td><td>${d.nohp}</td><td style="text-align:left">${d.alamat}</td><td>${d.tglMasuk}</td></tr>`).join('') : `<tr><td colspan="9">Belum ada data</td></tr>`;
+  let old=document.getElementById('printFrame'); if(old) old.remove();
+  let iframe=document.createElement('iframe');
+  iframe.id='printFrame'; iframe.style.position='fixed'; iframe.style.width='0'; iframe.style.height='0'; iframe.style.border='0';
   document.body.appendChild(iframe);
-
-  let html = `<html><head><title>Data Santri TPQ</title><style>
-    @page{size:landscape;margin:10mm} body{font-family:Arial;padding:20px} h2,p{text-align:center;margin:0}
-    p{margin:6px 0 15px 0} table{width:100%;border-collapse:collapse} th,td{border:1px solid #000;padding:6px;font-size:12px;text-align:center}
-    th{background:#eee} .footer-wrap{display:flex;justify-content:flex-end;margin-top:50px} .footer{text-align:center;width:220px;line-height:1.6}
+  let html=`<html><head><title>Data Santri</title><style>
+    @page{size:landscape;margin:10mm} body{font-family:Arial;padding:20px;color:#000}
+    h2{text-align:center;margin:0} .sub{text-align:center;margin:6px 0 12px 0}
+    table{width:100%;border-collapse:collapse} th,td{border:1px solid #000;padding:6px;font-size:11px;text-align:center} th{background:#eee}
+    .ttd-wrap{display:flex;justify-content:flex-end;margin-top:50px} .ttd{text-align:center;width:240px;line-height:1.6}
     </style></head><body>
-    <h2>DATA SANTRI TPQ BAITURRAHMAN</h2><p>Total: ${filtered.length} | ${tgl}</p>
-    <table><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Temp/Tgl.Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr>${rows}</table>
-    <div class="footer-wrap"><div class="footer">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div></div>
+    <h2>DATA SANTRI TPQ BAITURRAHMAN</h2><div class="sub">Total: ${filtered.length} | ${tgl}</div>
+    <table><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat Lahir</th><th>Tgl Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr>${rows}</table>
+    <div class="ttd-wrap"><div class="ttd">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div></div>
     </body></html>`;
-
-  let doc = iframe.contentWindow.document;
-  doc.open(); doc.write(html); doc.close();
+  let doc=iframe.contentWindow.document; doc.open(); doc.write(html); doc.close();
   setTimeout(()=>{ iframe.contentWindow.focus(); iframe.contentWindow.print(); }, 500);
 }
-function goDashboard(){
-  window.location.href = 'santri.html';
-}
-    </script>
-  </body>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('tglLahir').value = today;
+  document.getElementById('tglMasuk').value = today;
+  render();
+});
+</script>
+</body>
 </html>
