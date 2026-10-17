@@ -5,30 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DATA SANTRI TPQ BAITURRAHMAN</title>
 <style>
-*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:#0f172a;color:#e2e8f0;padding:16px}
-.card{background:#1e293b;border-radius:16px;padding:18px;margin:0 auto 16px auto;max-width:1100px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-h1{margin:0;text-align:center;font-size:22px} .sub{text-align:center;color:#94a3b8;font-size:13px;margin:6px 0 16px 0}
+*{box-sizing:border-box} body{margin:0;font-family:Arial;background:#0f172a;color:#e2e8f0;padding:16px}
+.card{background:#1e293b;border-radius:16px;padding:18px;margin:0 auto 16px;max-width:1100px}
+h1{margin:0;text-align:center;font-size:22px} .sub{text-align:center;color:#94a3b8;font-size:13px;margin:6px 0 16px}
 .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px} @media(max-width:768px){.grid{grid-template-columns:1fr}}
-input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;outline:none}
-input:focus,select:focus{border-color:#38bdf8}
-.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.btn{border:0;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer}
-.btn-blue{background:#3b82f6;color:#fff} .btn-green{background:#22c55e;color:#000} .btn-gray{background:#334155;color:#fff}
-.search{width:100%;margin-bottom:12px}
+input,select{width:100%;padding:10px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{border:0;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer}
+.btn-blue{background:#3b82f6;color:#fff} .btn-orange{background:#f59e0b;color:#000} .btn-green{background:#22c55e;color:#000} .btn-gray{background:#334155;color:#fff}
 table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:8px;border-bottom:1px solid #334155;text-align:left}
-th{color:#94a3b8;font-size:12px;text-transform:uppercase} .center{text-align:center}
-.action button{margin-right:4px;padding:4px 8px;border-radius:6px;border:0;cursor:pointer;font-size:11px}
-.del{background:#ef4444;color:#fff}
+th{color:#94a3b8;font-size:11px} .center{text-align:center}
+.edit{background:#f59e0b;color:#000;padding:4px 10px;border-radius:6px;border:0;cursor:pointer;font-size:11px;margin-right:4px}
+.del{background:#ef4444;color:#fff;padding:4px 10px;border-radius:6px;border:0;cursor:pointer;font-size:11px}
 </style>
 </head>
 <body>
 <div class="card">
 <h1>DATA SANTRI TPQ BAITURRAHMAN</h1>
-<div class="sub">Jl. Gadang 12 A Gadang Sukun Malang | PIN Hapus: amanah2000</div>
+<div class="sub" id="formTitle">Form Input - PIN Hapus: amanah2000</div>
 <div class="grid">
 <input id="nama" placeholder="Nama Santri">
 <select id="lp"><option value="L">L - Laki</option><option value="P">P - Perempuan</option></select>
-<input id="tempat" placeholder="Tempat Lahir">
+<input id="tempat" placeholder="Tempat Lahir (Malang)">
 <input id="tglLahir" type="date">
 <input id="wali" placeholder="Nama Wali">
 <input id="nohp" placeholder="No HP Wali">
@@ -36,92 +34,67 @@ th{color:#94a3b8;font-size:12px;text-transform:uppercase} .center{text-align:cen
 <input id="tglMasuk" type="date">
 </div>
 <div class="btn-row">
-<button class="btn btn-blue" onclick="tambahSantri()">+ Tambah Santri</button>
+<button id="btnSimpan" class="btn btn-blue" onclick="simpanSantri()">+ Tambah Santri</button>
+<button id="btnBatal" class="btn btn-gray" onclick="batalEdit()" style="display:none">Batal Edit</button>
 <button class="btn btn-green" onclick="cetakSantri()">Cetak</button>
-<button class="btn btn-gray" onclick="location.reload()">Dashboard</button>
 </div>
 </div>
 
 <div class="card">
-<input id="cari" class="search" placeholder="Cari Nama / Wali / Alamat..." oninput="render()">
+<input id="cari" placeholder="Cari Nama / Wali..." style="width:100%;margin-bottom:12px" oninput="render()">
 <div style="overflow:auto">
-<table><thead><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat Lahir</th><th>Tgl Lahir</th><th>Wali</th><th>No.HP</th><th>Alamat</th><th>Tgl Masuk</th><th>AKSI</th></tr></thead>
-<tbody id="tbody"><tr><td colspan="10" class="center">Belum ada data</td></tr></tbody></table>
+<table><thead><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat</th><th>Tgl Lahir</th><th>Wali</th><th>HP</th><th>Alamat</th><th>Masuk</th><th>AKSI</th></tr></thead>
+<tbody id="tbody"></tbody></table>
 </div>
-<div id="total" style="margin-top:10px;color:#94a3b8;font-size:13px">Total Santri: 0</div>
+<div id="total" style="margin-top:8px;color:#94a3b8;font-size:13px">Total: 0</div>
 </div>
 
 <script>
-const LS_KEY = 'santri-tpq-v2';
-function getData(){ try{return JSON.parse(localStorage.getItem(LS_KEY)||'[]')}catch(e){return []} }
-function saveData(d){ localStorage.setItem(LS_KEY, JSON.stringify(d)) }
+const LS_KEY='santri-tpq-v2'; let editId=null;
+function getData(){return JSON.parse(localStorage.getItem(LS_KEY)||'[]')} function saveData(d){localStorage.setItem(LS_KEY,JSON.stringify(d))}
 
-function tambahSantri(){
-  const nama = document.getElementById('nama').value.trim();
-  const lp = document.getElementById('lp').value;
-  const tempat = document.getElementById('tempat').value.trim() || 'Malang';
-  const tglLahir = document.getElementById('tglLahir').value;
-  const wali = document.getElementById('wali').value.trim();
-  const nohp = document.getElementById('nohp').value.trim();
-  const alamat = document.getElementById('alamat').value.trim();
-  const tglMasuk = document.getElementById('tglMasuk').value || new Date().toISOString().slice(0,10);
-  if(!nama){ alert('Nama wajib diisi'); return; }
-  if(!wali){ alert('Nama wali wajib diisi'); return; }
-  let data = getData();
-  data.push({id:Date.now(), nama, lp, tempat, tglLahir, wali, nohp, alamat, tglMasuk});
-  saveData(data);
-  document.getElementById('nama').value=''; document.getElementById('wali').value=''; document.getElementById('nohp').value=''; document.getElementById('alamat').value='';
-  render();
+function simpanSantri(){
+  const nama=document.getElementById('nama').value.trim(); const lp=document.getElementById('lp').value;
+  const tempat=document.getElementById('tempat').value.trim()||'Malang'; const tglLahir=document.getElementById('tglLahir').value;
+  const wali=document.getElementById('wali').value.trim(); const nohp=document.getElementById('nohp').value.trim();
+  const alamat=document.getElementById('alamat').value.trim(); const tglMasuk=document.getElementById('tglMasuk').value||new Date().toISOString().slice(0,10);
+  if(!nama){alert('Nama wajib'); return} if(!wali){alert('Wali wajib'); return}
+  let data=getData();
+  if(editId){ data=data.map(x=> x.id===editId ? {...x, nama,lp,tempat,tglLahir,wali,nohp,alamat,tglMasuk} : x); editId=null; }
+  else{ data.push({id:Date.now(),nama,lp,tempat,tglLahir,wali,nohp,alamat,tglMasuk}); }
+  saveData(data); resetForm(); render();
 }
-
-function hapusSantri(id){
-  let pin = prompt('PIN hapus:');
-  if(pin!=='amanah2000'){ alert('PIN salah'); return; }
-  saveData(getData().filter(x=>x.id!==id)); render();
+function editSantri(id){
+  let data=getData().find(x=>x.id===id); if(!data) return;
+  editId=id; document.getElementById('nama').value=data.nama; document.getElementById('lp').value=data.lp;
+  document.getElementById('tempat').value=data.tempat; document.getElementById('tglLahir').value=data.tglLahir;
+  document.getElementById('wali').value=data.wali; document.getElementById('nohp').value=data.nohp;
+  document.getElementById('alamat').value=data.alamat; document.getElementById('tglMasuk').value=data.tglMasuk;
+  document.getElementById('btnSimpan').innerText='✓ Update Santri'; document.getElementById('btnSimpan').className='btn btn-orange';
+  document.getElementById('btnBatal').style.display='inline-block'; document.getElementById('formTitle').innerText='Mode Edit - Sedang edit '+data.nama;
+  window.scrollTo({top:0,behavior:'smooth'});
 }
+function batalEdit(){ editId=null; resetForm(); }
+function resetForm(){
+  document.getElementById('nama').value=''; document.getElementById('wali').value=''; document.getElementById('nohp').value=''; document.getElementById('alamat').value=''; document.getElementById('tempat').value='';
+  document.getElementById('btnSimpan').innerText='+ Tambah Santri'; document.getElementById('btnSimpan').className='btn btn-blue';
+  document.getElementById('btnBatal').style.display='none'; document.getElementById('formTitle').innerText='Form Input - PIN Hapus: amanah2000';
+}
+function hapusSantri(id){ let p=prompt('PIN hapus:'); if(p!=='amanah2000'){alert('PIN salah');return} saveData(getData().filter(x=>x.id!==id)); render(); }
 function render(){
-  let data = getData();
-  let q = (document.getElementById('cari').value||'').toLowerCase();
-  let filtered = data.filter(d=> (d.nama+' '+d.wali+' '+d.alamat).toLowerCase().includes(q));
-  let tbody = document.getElementById('tbody');
-  if(filtered.length===0){ tbody.innerHTML='<tr><td colspan="10" class="center">Belum ada data</td></tr>'; }
-  else{
-    tbody.innerHTML = filtered.map((d,i)=>`<tr>
-      <td>${i+1}</td><td>${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir}</td>
-      <td>${d.wali}</td><td>${d.nohp}</td><td>${d.alamat}</td><td>${d.tglMasuk}</td>
-      <td class="action"><button class="del" onclick="hapusSantri(${d.id})">Hapus</button></td></tr>`).join('');
-  }
-  document.getElementById('total').innerText='Total Santri: '+filtered.length;
+  let q=(document.getElementById('cari').value||'').toLowerCase(); let data=getData(); let f=data.filter(d=>(d.nama+' '+d.wali).toLowerCase().includes(q));
+  document.getElementById('tbody').innerHTML=f.length? f.map((d,i)=>`<tr><td>${i+1}</td><td>${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir}</td><td>${d.wali}</td><td>${d.nohp}</td><td>${d.alamat}</td><td>${d.tglMasuk}</td><td><button class="edit" onclick="editSantri(${d.id})">Edit</button><button class="del" onclick="hapusSantri(${d.id})">Hapus</button></td></tr>`).join('') : `<tr><td colspan="10" class="center">Belum ada data</td></tr>`;
+  document.getElementById('total').innerText='Total Santri: '+f.length;
 }
-
 function cetakSantri(){
-  const data = getData();
-  const q = (document.getElementById('cari').value||'').toLowerCase();
-  const filtered = data.filter(d=> (d.nama+' '+d.wali+' '+d.alamat).toLowerCase().includes(q));
-  const tgl = new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});
-  const rows = filtered.map((d,i)=>`<tr><td>${i+1}</td><td>${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir}</td><td>${d.wali}</td><td>${d.nohp}</td><td>${d.alamat}</td><td>${d.tglMasuk}</td></tr>`).join('') || `<tr><td colspan="9">Belum ada data</td></tr>`;
-  let old=document.getElementById('printFrame'); if(old) old.remove();
-  let iframe=document.createElement('iframe'); iframe.id='printFrame'; iframe.style.width='0'; iframe.style.height='0'; iframe.style.border='0'; iframe.style.position='fixed'; iframe.style.right='0'; iframe.style.bottom='0';
-  document.body.appendChild(iframe);
-  let html=`<html><head><title>Data Santri</title><style>
-    @page{size:portrait;margin:12mm} body{font-family:Arial;color:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh}
-    h2{margin:0;text-align:center} .sub{text-align:center;margin:8px 0 16px 0}
-    table{width:95%;border-collapse:collapse;margin:0 auto} th,td{border:1px solid #000;padding:7px;font-size:11px;text-align:center}
-    th{background:#eee} .ttd{margin-top:60px;text-align:center;line-height:1.6}
-    </style></head><body>
-    <h2>DATA SANTRI TPQ BAITURRAHMAN</h2><div class="sub">Total: ${filtered.length} | ${tgl}</div>
-    <table><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat Lahir</th><th>Tgl Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr>${rows}</table>
-    <div class="ttd">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div>
-    </body></html>`;
-  let doc=iframe.contentWindow.document; doc.open(); doc.write(html); doc.close();
-  setTimeout(()=>{ iframe.contentWindow.print(); }, 500);
+  let data=getData(); let q=(document.getElementById('cari').value||'').toLowerCase(); let f=data.filter(d=>(d.nama+' '+d.wali).toLowerCase().includes(q));
+  let tgl=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});
+  let rows=f.map((d,i)=>`<tr><td>${i+1}</td><td style="text-align:left">${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir}</td><td style="text-align:left">${d.wali}</td><td>${d.nohp}</td><td style="text-align:left">${d.alamat}</td><td>${d.tglMasuk}</td></tr>`).join('') || `<tr><td colspan="9">Belum ada data</td></tr>`;
+  let old=document.getElementById('printFrame'); if(old) old.remove(); let iframe=document.createElement('iframe'); iframe.id='printFrame'; iframe.style.width='0'; iframe.style.height='0'; iframe.style.border='0'; iframe.style.position='fixed'; document.body.appendChild(iframe);
+  let html=`<html><head><title>Data Santri</title><style>@page{size:landscape;margin:10mm} body{font-family:Arial;color:#000;text-align:center} h2{margin:0} .sub{margin:6px 0 12px} table{width:100%;border-collapse:collapse;margin:0 auto} th,td{border:1px solid #000;padding:6px;font-size:11px;text-align:center} th{background:#eee} .ttd{margin-top:60px;text-align:center;line-height:1.6}</style></head><body><h2>DATA SANTRI TPQ BAITURRAHMAN</h2><div class="sub">Total: ${f.length} | ${tgl}</div><table><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat Lahir</th><th>Tgl Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr>${rows}</table><div class="ttd">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div></body></html>`;
+  let doc=iframe.contentWindow.document; doc.open(); doc.write(html); doc.close(); setTimeout(()=>{iframe.contentWindow.print()},500);
 }
-document.addEventListener('DOMContentLoaded', ()=>{
-  const today = new Date().toISOString().slice(0,10);
-  document.getElementById('tglLahir').value = today;
-  document.getElementById('tglMasuk').value = today;
-  render();
-});
+document.addEventListener('DOMContentLoaded',()=>{render()});
 </script>
 </body>
 </html>
