@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DATA SANTRI TPQ BAITURRAHMAN - SYNC</title>
+<title>DATA SANTRI TPQ BAITURRAHMAN</title>
 <style>
 *{box-sizing:border-box} body{margin:0;font-family:Arial;background:#0f172a;color:#e2e8f0;padding:16px}
-.card{background:#1e293b;border-radius:16px;padding:18px;margin:0 auto 16px;max-width:1100px}
+.card{background:#1e293b;border-radius:16px;padding:18px;margin:0 auto 16px;max-width:1200px}
 h1{margin:0;text-align:center;font-size:22px} .sub{text-align:center;color:#94a3b8;font-size:12px;margin:6px 0 16px}
 .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px} @media(max-width:768px){.grid{grid-template-columns:1fr}}
 input,select{width:100%;padding:10px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .btn{border:0;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer}
 .btn-blue{background:#3b82f6;color:#fff} .btn-orange{background:#f59e0b;color:#000} .btn-green{background:#22c55e;color:#000} .btn-gray{background:#334155;color:#fff}
-table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:8px;border-bottom:1px solid #334155;text-align:left}
+table{width:100%;border-collapse:collapse;font-size:12px} th,td{padding:8px;border-bottom:1px solid #334155;text-align:left;white-space:nowrap}
 th{color:#94a3b8;font-size:11px} .center{text-align:center}
 .edit{background:#f59e0b;color:#000;padding:4px 10px;border-radius:6px;border:0;cursor:pointer;font-size:11px;margin-right:4px}
 .del{background:#ef4444;color:#fff;padding:4px 10px;border-radius:6px;border:0;cursor:pointer;font-size:11px}
@@ -24,84 +24,101 @@ th{color:#94a3b8;font-size:11px} .center{text-align:center}
 <body>
 <div class="card">
 <h1>DATA SANTRI TPQ BAITURRAHMAN</h1>
-<div class="sub">SYNC ONLINE AKTIF - PIN Hapus: amanah2000<br><span class="sync" id="statusSync">● Sinkron Aktif - Semua HP Sama</span></div>
+<div class="sub">SYNC ONLINE AKTIF - PIN Hapus: amanah2000<br><span class="sync">● Sinkron Aktif - Semua HP Sama</span></div>
 <div class="grid">
-<input id="nama" placeholder="Nama Santri">
+<input id="nama" placeholder="Nama Santri *">
 <select id="lp"><option value="L">L - Laki</option><option value="P">P - Perempuan</option></select>
 <input id="tempat" placeholder="Tempat Lahir">
-<input id="tglLahir" type="date">
-<input id="wali" placeholder="Nama Wali">
+<input id="tglLahir" type="date"><input id="labelTgl" value="Tgl Lahir" disabled style="display:none">
+<input id="wali" placeholder="Nama Wali *">
 <input id="nohp" placeholder="No HP Wali">
 <input id="alamat" placeholder="Alamat">
 <input id="tglMasuk" type="date">
 </div>
 <div class="btn-row">
-<button id="btnSimpan" class="btn btn-blue" onclick="simpanSantri()">+ Tambah Santri</button>
-<button id="btnBatal" class="btn btn-gray" onclick="batalEdit()" style="display:none">Batal Edit</button>
-<button class="btn btn-green" onclick="cetakSantri()">Cetak (TTD Kanan)</button>
+<button id="btnSimpan" class="btn btn-blue">+ Tambah Santri</button>
+<button id="btnBatal" class="btn btn-gray" style="display:none">Batal Edit</button>
+<button id="btnCetak" class="btn btn-green">Cetak (TTD Kanan)</button>
 </div>
 </div>
 <div class="card">
-<input id="cari" placeholder="Cari Nama / Wali..." style="width:100%;margin-bottom:12px" oninput="render()">
-<div style="overflow:auto"><table><thead><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat</th><th>Wali</th><th>HP</th><th>Alamat</th><th>Masuk</th><th>AKSI</th></tr></thead><tbody id="tbody"></tbody></table></div>
+<input id="cari" placeholder="Cari Nama / Wali..." style="width:100%;margin-bottom:12px">
+<div style="overflow:auto"><table><thead><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat</th><th>Tgl Lahir</th><th>Wali</th><th>HP</th><th>Alamat</th><th>Masuk</th><th>AKSI</th></tr></thead><tbody id="tbody"></tbody></table></div>
 <div id="total" style="margin-top:8px;color:#94a3b8;font-size:13px">Total: 0</div>
 </div>
 <script type="module">
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, serverTimestamp, query, orderBy } from "firebase/firestore";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyCNODbwLVG355HQyFkZ25UXPPNArCMDVc",
   authDomain: "santri-f7718.firebaseapp.com",
   projectId: "santri-f7718",
   storageBucket: "santri-f7718.firebasestorage.app",
   messagingSenderId: "1083094451581",
-  appId: "1:1083094451581:web:3a99f6acfa18047cfb814",
-  measurementId: "G-K411RSFCSK"
+  appId: "1:1083094451581:web:3a99f6acfa18047cfb814"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const colRef = collection(db, "santri");
 let allData=[]; let editId=null;
-const q = query(colRef, orderBy("createdAt","desc"));
 onSnapshot(colRef, (snap)=>{ allData = snap.docs.map(d=> ({id:d.id, ...d.data()})); render(); });
 function resetForm(){
   document.getElementById('nama').value=''; document.getElementById('wali').value=''; document.getElementById('nohp').value=''; document.getElementById('alamat').value=''; document.getElementById('tempat').value='';
   document.getElementById('btnSimpan').innerText='+ Tambah Santri'; document.getElementById('btnSimpan').className='btn btn-blue';
   document.getElementById('btnBatal').style.display='none'; editId=null;
 }
-window.simpanSantri = async function(){
+document.getElementById('btnSimpan').addEventListener('click', async ()=>{
   const nama=document.getElementById('nama').value.trim(); const lp=document.getElementById('lp').value;
   const tempat=document.getElementById('tempat').value.trim()||'Malang'; const tglLahir=document.getElementById('tglLahir').value;
   const wali=document.getElementById('wali').value.trim(); const nohp=document.getElementById('nohp').value.trim();
   const alamat=document.getElementById('alamat').value.trim(); const tglMasuk=document.getElementById('tglMasuk').value||new Date().toISOString().slice(0,10);
   if(!nama){alert('Nama wajib');return} if(!wali){alert('Wali wajib');return}
-  if(editId){ await updateDoc(doc(db,"santri",editId), {nama,lp,tempat,tglLahir,wali,nohp,alamat,tglMasuk}); }
-  else{ await addDoc(colRef, {nama,lp,tempat,tglLahir,wali,nohp,alamat,tglMasuk, createdAt: serverTimestamp()}); }
-  resetForm();
-}
+  const btn=document.getElementById('btnSimpan'); const txt=btn.innerText; btn.innerText='Menyimpan...'; btn.disabled=true;
+  try{
+    if(editId){ await updateDoc(doc(db,"santri",editId), {nama,lp,tempat,tglLahir,wali,nohp,alamat,tglMasuk}); }
+    else{ await addDoc(colRef, {nama,lp,tempat,tglLahir,wali,nohp,alamat,tglMasuk, createdAt: serverTimestamp()}); }
+    resetForm();
+  }catch(e){ alert('Gagal: '+e.message); }
+  btn.innerText=txt; btn.disabled=false;
+});
+document.getElementById('btnBatal').addEventListener('click', ()=>{ resetForm(); });
+document.getElementById('cari').addEventListener('input', ()=>{ render(); });
+document.getElementById('btnCetak').addEventListener('click', ()=>{ cetakSantri(); });
 window.editSantri = function(id){
   let d=allData.find(x=>x.id===id); if(!d) return; editId=id;
-  document.getElementById('nama').value=d.nama; document.getElementById('lp').value=d.lp; document.getElementById('tempat').value=d.tempat;
-  document.getElementById('tglLahir').value=d.tglLahir; document.getElementById('wali').value=d.wali; document.getElementById('nohp').value=d.nohp;
-  document.getElementById('alamat').value=d.alamat; document.getElementById('tglMasuk').value=d.tglMasuk;
+  document.getElementById('nama').value=d.nama; document.getElementById('lp').value=d.lp||'L'; document.getElementById('tempat').value=d.tempat||'';
+  document.getElementById('tglLahir').value=d.tglLahir||''; document.getElementById('wali').value=d.wali||''; document.getElementById('nohp').value=d.nohp||'';
+  document.getElementById('alamat').value=d.alamat||''; document.getElementById('tglMasuk').value=d.tglMasuk||'';
   document.getElementById('btnSimpan').innerText='✓ Update Santri'; document.getElementById('btnSimpan').className='btn btn-orange';
   document.getElementById('btnBatal').style.display='inline-block'; window.scrollTo({top:0,behavior:'smooth'});
-}
-window.batalEdit = function(){ resetForm(); }
-window.hapusSantri = async function(id){ let p=prompt('PIN hapus:'); if(p!=='amanah2000'){alert('PIN salah');return} await deleteDoc(doc(db,"santri",id)); }
+};
+window.hapusSantri = async function(id){ let p=prompt('PIN hapus:'); if(p!=='amanah2000'){alert('PIN salah');return} await deleteDoc(doc(db,"santri",id)); };
 window.render = function(){
-  let qq=(document.getElementById('cari').value||'').toLowerCase(); let f=allData.filter(d=>(d.nama+' '+d.wali).toLowerCase().includes(qq));
-  document.getElementById('tbody').innerHTML=f.length? f.map((d,i)=>`<tr><td>${i+1}</td><td>${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.wali}</td><td>${d.nohp}</td><td>${d.alamat}</td><td>${d.tglMasuk}</td><td><button class="edit" onclick="editSantri('${d.id}')">Edit</button><button class="del" onclick="hapusSantri('${d.id}')">Hapus</button></td></tr>`).join('') : `<tr><td colspan="9" class="center">Belum ada data</td></tr>`;
+  let qq=(document.getElementById('cari').value||'').toLowerCase(); 
+  let f=allData.filter(d=> ((d.nama||'')+' '+(d.wali||'')).toLowerCase().includes(qq));
+  let tbody=document.getElementById('tbody');
+  if(f.length===0){ tbody.innerHTML=`<tr><td colspan="10" class="center">Belum ada data</td></tr>`; }
+  else{
+    tbody.innerHTML='';
+    f.forEach((d,i)=>{
+      let tr=document.createElement('tr');
+      tr.innerHTML=`<td>${i+1}</td><td>${d.nama||''}</td><td>${d.lp||''}</td><td>${d.tempat||''}</td><td>${d.tglLahir||''}</td><td>${d.wali||''}</td><td>${d.nohp||''}</td><td>${d.alamat||''}</td><td>${d.tglMasuk||''}</td><td></td>`;
+      let td=tr.lastElementChild;
+      let bE=document.createElement('button'); bE.className='edit'; bE.innerText='Edit'; bE.onclick=()=>editSantri(d.id);
+      let bD=document.createElement('button'); bD.className='del'; bD.innerText='Hapus'; bD.onclick=()=>hapusSantri(d.id);
+      td.appendChild(bE); td.appendChild(bD); tbody.appendChild(tr);
+    });
+  }
   document.getElementById('total').innerText='Total Santri: '+f.length;
-}
+};
 window.cetakSantri = function(){
-  let qq=(document.getElementById('cari').value||'').toLowerCase(); let f=allData.filter(d=>(d.nama+' '+d.wali).toLowerCase().includes(qq));
+  let qq=(document.getElementById('cari').value||'').toLowerCase(); let f=allData.filter(d=> ((d.nama||'')+' '+(d.wali||'')).toLowerCase().includes(qq));
   let tgl=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});
-  let rows=f.map((d,i)=>`<tr><td>${i+1}</td><td style="text-align:left">${d.nama}</td><td>${d.lp}</td><td>${d.tempat}</td><td>${d.tglLahir||''}</td><td style="text-align:left">${d.wali}</td><td>${d.nohp}</td><td style="text-align:left">${d.alamat}</td><td>${d.tglMasuk}</td></tr>`).join('') || `<tr><td colspan="9">Belum ada data</td></tr>`;
+  let rows=f.map((d,i)=>`<tr><td>${i+1}</td><td style="text-align:left">${d.nama||''}</td><td>${d.lp||''}</td><td>${d.tempat||''}</td><td>${d.tglLahir||''}</td><td style="text-align:left">${d.wali||''}</td><td>${d.nohp||''}</td><td style="text-align:left">${d.alamat||''}</td><td>${d.tglMasuk||''}</td></tr>`).join('') || `<tr><td colspan="9">Belum ada data</td></tr>`;
   let old=document.getElementById('printFrame'); if(old) old.remove(); let iframe=document.createElement('iframe'); iframe.id='printFrame'; iframe.style.width='0'; iframe.style.height='0'; iframe.style.border='0'; iframe.style.position='fixed'; document.body.appendChild(iframe);
-  let html=`<html><head><title>Data Santri</title><style>@page{size:landscape;margin:10mm} body{font-family:Arial;color:#000} h2{text-align:center;margin:0} .sub{text-align:center;margin:6px 0 12px} table{width:100%;border-collapse:collapse} th,td{border:1px solid #000;padding:6px;font-size:11px;text-align:center} th{background:#eee} .ttd-wrap{display:flex;justify-content:flex-end;margin-top:60px} .ttd{text-align:center;width:250px;line-height:1.6}</style></head><body><h2>DATA SANTRI TPQ BAITURRAHMAN</h2><div class="sub">Total: ${f.length} | ${tgl}</div><table><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat Lahir</th><th>Tgl Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr>${rows}</table><div class="ttd-wrap"><div class="ttd">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div></div></body></html>`;
-  let doc=iframe.contentWindow.document; doc.open(); doc.write(html); doc.close(); setTimeout(()=>{iframe.contentWindow.print()},500);
-}
+  let html=`<html><head><title>Data Santri</title><style>@page{size:landscape;margin:10mm} body{font-family:Arial;color:#000} h2{text-align:center;margin:0} .sub{text-align:center;margin:6px 0 12px} table{width:100%;border-collapse:collapse} th,td{border:1px solid #000;padding:6px;font-size:11px;text-align:center} th{background:#eee} .ttd-wrap{display:flex;justify-content:flex-end;margin-top:60px} .ttd{text-align:center;width:250px;line-height:1.6}</style></head><body><h2>DATA SANTRI TPQ BAITURRAHMAN</h2><div class="sub">Total: ${f.length} | ${tgl}</div><table><tr><th>NO</th><th>NAMA</th><th>L/P</th><th>Tempat</th><th>Tgl Lahir</th><th>WALI</th><th>HP</th><th>ALAMAT</th><th>MASUK</th></tr>${rows}</table><div class="ttd-wrap"><div class="ttd">Malang, ${tgl}<br><br><br><br><br>( Pengurus TPQ )</div></div></body></html>`;
+  let docu=iframe.contentWindow.document; docu.open(); docu.write(html); docu.close(); setTimeout(()=>{iframe.contentWindow.print()},500);
+};
 </script>
 </body>
 </html>
