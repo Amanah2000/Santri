@@ -63,7 +63,7 @@ const db = getFirestore(app);
 const colRef = collection(db, "santri");
 let allData=[]; let editId=null;
 const q = query(colRef, orderBy("createdAt","desc"));
-onSnapshot(q, (snap)=>{ allData = snap.docs.map(d=> ({id:d.id, ...d.data()})); render(); });
+onSnapshot(colRef, (snap)=>{ allData = snap.docs.map(d=> ({id:d.id, ...d.data()})); render(); });
 function resetForm(){
   document.getElementById('nama').value=''; document.getElementById('wali').value=''; document.getElementById('nohp').value=''; document.getElementById('alamat').value=''; document.getElementById('tempat').value='';
   document.getElementById('btnSimpan').innerText='+ Tambah Santri'; document.getElementById('btnSimpan').className='btn btn-blue';
